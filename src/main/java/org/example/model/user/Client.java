@@ -1,21 +1,27 @@
 package org.example.model.user;
 
-import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.time.LocalDate;
 
 
 @Getter
-@Entity
 public class Client {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String login;
-    private String password;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable (
-    )
+    private final String login;
+    private final String password;
     private Membership membership;
+
+    public Client(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+
+    public void setMembership(Membership membership) {
+        this.membership = membership;
+    }
+
+    public boolean hasValidMembership() {
+        return membership != null && membership.expirationDate().isAfter(LocalDate.now());
+    }
 
 }

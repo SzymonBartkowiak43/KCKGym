@@ -1,69 +1,36 @@
 package org.example;
 
 import org.example.controller.GymController;
-import org.example.model.user.ClientService;
 import org.example.view.GymView;
+import org.example.view.GymViewSwing;
+import org.example.view.View;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        GymController gymController = new GymController();
+
+
         Scanner scanner = new Scanner(System.in);
-        int choose = scanner.nextInt();
-        User user = null;
-        ClientService userService = new ClientService();
+        System.out.println("Select view: 1. Console View 2. Swing View");
+        int choice = scanner.nextInt();
 
-        System.out.println("===Good morning, welcome to the gym===");
-        System.out.println("I have an account(1) /\\/\\/\\ Register (2)");
-
-        scanner.nextLine();
+        View gymView = null;
 
 
-
-        while (choose == 1) {
-            System.out.println("Enter your login: ");
-            String login = scanner.nextLine();
-            System.out.println("Enter you password: ");
-            String password = scanner.nextLine();
-
-            userService
+        if (choice == 1) {
+            gymView = new GymView(gymController);
+        } else if (choice == 2) {
+            gymView = new GymViewSwing(gymController);
+        } else {
+            System.out.println("Invalid choice! Defaulting to Console View.");
+            gymView = new GymView(gymController);
         }
 
+        gymController.setView(gymView);
 
-
-        GymView view = new GymView();
-        GymController controller = new GymController(user, view);
-
-        while (true) {
-            System.out.println("\n=== Siłownia ===");
-            System.out.println("1. Kup karnet");
-            System.out.println("2. Sprawdź status karnetu");
-            System.out.println("3. Wejdź na siłownię");
-            System.out.println("4. Wyjście");
-            System.out.print("Wybierz opcję: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Wyczyść bufor
-
-            switch (choice) {
-                case 1:
-                    controller.displayMembershipTypes();
-                    System.out.print("Wybierz typ karnetu: ");
-                    String type = scanner.nextLine();
-                    controller.purchaseMembership(type);
-                    break;
-                case 2:
-                    controller.checkMembershipStatus();
-                    break;
-                case 3:
-                    controller.enterGym();
-                    break;
-                case 4:
-                    System.out.println("Dziękujemy za odwiedziny!");
-                    scanner.close();
-                    return;
-                default:
-                    System.out.println("Nieprawidłowa opcja, spróbuj ponownie.");
-            }
-        }
+        gymView.run();
     }
 }
